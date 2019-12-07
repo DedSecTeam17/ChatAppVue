@@ -4,8 +4,8 @@
             <li class="list-group-item" @click="selectUser(user)"  v-for="user in users" v-bind:key="user">
                 <div class="row">
                     <div class="col-4">
-                        <img src="https://via.placeholder.com/150/92c952" width="70" height="70"
-                             class="img-fluid rounded-circle">
+                        <img :src="`https://ui-avatars.com/api/?rounded=true&name=${user.userName}`" width="50" height="50"
+                             class="rounded-circle">
                     </div>
                     <div class="col-8">
                         <p>{{user.userName}}</p>

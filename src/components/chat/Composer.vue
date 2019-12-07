@@ -2,12 +2,11 @@
     <div class="card">
 
         <div class="card-body">
-            <form @submit.prevent="send()" class="form-inline row">
-                <div class=" col-10">
-                    <label for="inputPassword2" class="sr-only">message</label>
+            <form @submit.prevent="send()" class=" row">
+                <div class=" col-9">
                     <input v-model="message" type="text" class="form-control" id="inputPassword2" placeholder="message">
                 </div>
-                <div class="col-2">
+                <div class="col-1">
                     <button type="submit" class="btn btn-outline-primary  ">Send</button>
                 </div>
             </form>

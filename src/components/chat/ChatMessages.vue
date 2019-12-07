@@ -1,42 +1,67 @@
 <template>
 
 
-   <div>
+    <div>
 
-       <div class="chat"  >
-
-
-           <div v-for="message in messages" v-bind:key="message">
-               <div class="mine messages">
-                   <div class="message last">
-                       {{message.message}}
-                   </div>
-               </div>
-               <div class="yours messages">
-                   <div class="message">
-                       Hey!
-                   </div>
-                   <div class="message">
-                       You there?
-                   </div>
-                   <div class="message last">
-                       Hello, how's it going?
-                   </div>
-               </div>
-           </div>
+        <div class="chat" ref="chat">
 
 
+            <div v-for="message in messages" v-bind:key="message">
+                <div v-if="message.from ===currentUserId"
+                class="mine messages">
+                    <div class="message last">
+                        {{message.message}}
+                    </div>
+                </div>
 
-       </div>
 
-   </div>
+                <div v-else class="yours messages">
+<!--                    <div class="message">-->
+<!--                        Hey!-->
+<!--                    </div>-->
+<!--                    <div class="message">-->
+<!--                        You there?-->
+<!--                    </div>-->
+                    <div class="message last">
+                        {{message.message}}
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
 </template>
 
 <script>
+    import {UserSession} from "../../Services/user_session";
+
     export default {
         name: "ChatMessages",
-        props :{
-            messages : Array
+        data(){
+          return {
+              currentUserId : UserSession.getUser()._id
+          }
+        },
+        methods:{
+          scrollToEnd(){
+              setTimeout(()=>{
+
+                  this.$refs.chat.scrollTop=this.$refs.chat.scrollHeight - this.$refs.chat.clientHeight;
+              },50);
+          }
+        },
+        watch:{
+            messages(){
+               this.scrollToEnd();
+            }
+        },
+        created(){
+            this.currentUserId=UserSession.getUser()._id;
+        },
+        props: {
+            messages: Array
         }
     }
 </script>
@@ -91,6 +116,7 @@
         background: #eee;
         border-bottom-right-radius: 15px;
     }
+
     .yours .message.last:after {
         content: "";
         position: absolute;

@@ -77,7 +77,6 @@
 <script>
     import {required, minLength, email} from 'vuelidate/lib/validators'
     import axios from 'axios';
-    import {UserSession} from "../../Services/user_session";
 
     export default {
         name: "Register",
@@ -115,22 +114,14 @@
                 }
             },
             SignUp() {
-                axios.post("https://sustkeys.herokuapp.com/users", {
-                    "email": this.email, "password": this.password
+                axios.post("https://sust-chat-app.herokuapp.com/users", {
+                    "email": this.email, "password": this.password, "userName": this.userName, "online": false
                 }).then(() => {
                     // console.log(res);
-                    axios.post("https://sustkeys.herokuapp.com/auth", {
-                        "email": this.email, "password": this.password
-                    }).then((res) => {
-                        this.showError = false;
-                        UserSession.setToken(res.data['token']);
-                        this.$router.push('/chat');
-                    }).catch((err) => {
-                        this.isLoading = false;
-                        this.error_data = err;
-                        this.showError = true;
-                        // console.log(err)
-                    })
+                    this.showError = false;
+                    // UserSession.setToken(res.data['token']);
+                    this.$router.push('/signIn');
+
                 }).catch((err) => {
                     this.isLoading = false;
                     this.error_data = err;

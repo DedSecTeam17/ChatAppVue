@@ -6,6 +6,7 @@ import {UserSession} from "./Services/user_session";
 import Index from "./components/chat/Index";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
+import VueTimeago from 'vue-timeago'
 import 'jquery';
 // import 'bootstrap/dist/js/bootstrap';
 // // import 'bootstrap'
@@ -24,13 +25,23 @@ Vue.use(require('vue-pusher'), {
     }
 });
 
+Vue.use(VueTimeago, {
+    name: 'Timeago', // Component name, `Timeago` by default
+    locale: 'en', // Default locale
+    // We use `date-fns` under the hood
+    // So you can use all locales from it
+    locales: {
+        'zh-CN': require('date-fns/locale/zh_cn'),
+        ja: require('date-fns/locale/ja')
+    }
+})
 const routes = [
     {
         path: '/chat',
         component: Index,
-        // meta: {
-        //     requiresAuth: true
-        // }
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/SignIn',

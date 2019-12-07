@@ -2,9 +2,9 @@
 
     <div class="card" >
         <div class="card-body">
-            <div class="row m-1">
+            <div class="row ">
                 <div class="col-2">
-                    <img src="https://via.placeholder.com/150/92c952" width="50" height="50"
+                    <img :src="`https://ui-avatars.com/api/?rounded=true&name=${user.userName}`" width="50" height="50"
                          class="img-fluid rounded-circle">
                 </div>
                 <div class="col-10">

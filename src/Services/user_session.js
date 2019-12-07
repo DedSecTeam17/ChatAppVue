@@ -9,14 +9,27 @@ export class UserSession {
 
     }
 
+
+    static setUser(user) {
+        // localStorage.setItem( "iat",iat);
+        // localStorage.setItem( "expire",expire);
+        localStorage.setItem("user", user);
+    }
+
     static destroyToken() {
         // localStorage.setItem( "iat",iat);
         // localStorage.setItem( "expire",expire);
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
     }
 
     static getUserToken() {
         return localStorage.getItem("token");
+    }
+
+    static getUser() {
+        return JSON.parse(localStorage.getItem("user"));
     }
 
     static isAuth() {

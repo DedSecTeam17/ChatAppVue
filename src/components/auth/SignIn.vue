@@ -56,6 +56,8 @@
 <script>
     import {required, minLength, email} from 'vuelidate/lib/validators'
     import axios from 'axios';
+    import {UserSession} from "../../Services/user_session";
+
     export default {
         name: "SignIn",
         data() {
@@ -88,19 +90,43 @@
                 }
             },
             SignIn() {
-                axios.post("https://sustkeys.herokuapp.com/auth", {
+                axios.post("https://sust-chat-app.herokuapp.com/auth", {
                     "email": this.email, "password": this.password
                 }).then((res) => {
                     this.showError = false;
                     // eslint-disable-next-line no-undef
                     UserSession.setToken(res.data['token']);
 
+                    UserSession.setToken(res.data['token']);
 
+                    axios.get("https://sust-chat-app.herokuapp.com/users", {
+                        headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
+                    }).then(() => {
+                        axios.get("https://sust-chat-app.herokuapp.com/users/connected", {
+                            headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
+                        }).then((data) => {
+                            // console.log(res);
+                            // this.showError = false;
+                            // UserSession.setToken(res.data['token']);
+                            // this.$router.push('/signIn');
+                            UserSession.setUser(JSON.stringify(data.data));
+                            this.$router.push('/chat');
+                        }).catch(() => {
+                            // this.isLoading = false;
+                            // this.error_data = err;
+                            // this.showError = true;
+                            // console.log(err)
+                        })
 
+                    })
+                        .catch((err) => {
+                            this.isLoading = false;
+                            this.error_data = err;
+                            this.showError = true;
+                        })
                     // UserSession.setId(res.data['u_id']);
-                    this.$router.push('/chat');
                 }).catch((err) => {
-                    this.isLoading=false;
+                    this.isLoading = false;
                     this.error_data = err;
                     this.showError = true;
                     // console.log(err)
