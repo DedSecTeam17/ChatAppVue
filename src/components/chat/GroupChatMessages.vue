@@ -7,24 +7,27 @@
 
 
             <div v-for="message in messages" v-bind:key="message._id">
-                <div v-if="message.from ===currentUserId"
-                class="mine messages">
+                <div v-if="message.message.from ===currentUserId"
+                     class="mine messages">
                     <div class="message last">
-                        {{message.message}}
+                        {{message.message.message}}
                     </div>
                 </div>
 
 
                 <div v-else class="yours messages">
-<!--                    <div class="message">-->
-<!--                        Hey!-->
-<!--                    </div>-->
-<!--                    <div class="message">-->
-<!--                        You there?-->
-<!--                    </div>-->
+                    <!--                    <div class="message">-->
+                    <!--                        Hey!-->
+                    <!--                    </div>-->
+                    <!--                    <div class="message">-->
+                    <!--                        You there?-->
+                    <!--                    </div>-->
+
                     <div class="message last">
-                        {{message.message}}
+                        <p style="color: gray; font-size: 10px"> @ {{message.user.userName}}</p>
+                        {{message.message.message}}
                     </div>
+
                 </div>
             </div>
 
@@ -38,27 +41,27 @@
     import {UserSession} from "../../Services/user_session";
 
     export default {
-        name: "ChatMessages",
-        data(){
-          return {
-              currentUserId : UserSession.getUser()._id
-          }
-        },
-        methods:{
-          scrollToEnd(){
-              setTimeout(()=>{
-
-                  this.$refs.chat.scrollTop=this.$refs.chat.scrollHeight - this.$refs.chat.clientHeight;
-              },50);
-          }
-        },
-        watch:{
-            messages(){
-               this.scrollToEnd();
+        name: "GroupChatMessages",
+        data() {
+            return {
+                currentUserId: UserSession.getUser()._id
             }
         },
-        created(){
-            this.currentUserId=UserSession.getUser()._id;
+        methods: {
+            scrollToEnd() {
+                setTimeout(() => {
+
+                    this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight - this.$refs.chat.clientHeight;
+                }, 50);
+            }
+        },
+        watch: {
+            messages() {
+                this.scrollToEnd();
+            }
+        },
+        created() {
+            this.currentUserId = UserSession.getUser()._id;
         },
         props: {
             messages: Array
@@ -70,10 +73,11 @@
 
     .chat {
         /*width: 300px;*/
-        height: 400px;
         max-height: 400px;
         /*position: fixed;*/
         /*width: 500px;*/
+        height: 400px;
+
         overflow-y: scroll;
         overflow-x: hidden;
         border: solid 1px #EEE;

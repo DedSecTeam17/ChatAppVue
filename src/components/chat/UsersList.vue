@@ -1,10 +1,26 @@
 <template>
     <div id="users">
         <ul class="list-group">
-            <li class="list-group-item" @click="selectUser(user)"  v-for="user in users" v-bind:key="user">
+
+            <li class="list-group-item" @click="selectGroup()">
                 <div class="row">
                     <div class="col-4">
-                        <img :src="`https://ui-avatars.com/api/?rounded=true&name=${user.userName}`" width="50" height="50"
+                        <img :src="`https://ui-avatars.com/api/?rounded=true&name=all`" width="50" height="50"
+                             class="rounded-circle">
+                    </div>
+                    <div class="col-8">
+                        <p>All users</p>
+                    </div>
+                </div>
+
+
+            </li>
+
+            <li class="list-group-item" @click="selectUser(user)" v-for="user in users" v-bind:key="user._id">
+                <div class="row">
+                    <div class="col-4">
+                        <img :src="`https://ui-avatars.com/api/?rounded=true&name=${user.userName}`" width="50"
+                             height="50"
                              class="rounded-circle">
                     </div>
                     <div class="col-8">
@@ -25,9 +41,8 @@
 <script>
     export default {
         name: "UsersList",
-        data (){
-          return {
-          }
+        data() {
+            return {}
         },
         props: {
             users: Array
@@ -35,6 +50,9 @@
         methods: {
             selectUser(user) {
                 this.$emit('selectUser', user);
+            },
+            selectGroup() {
+                this.$emit('selectGroup',);
             }
         }
     }
@@ -43,7 +61,7 @@
 <style scoped>
     #users {
         height: 600px;
-        position: fixed;
+        /*position: fixed;*/
         overflow-y: scroll;
     }
 

@@ -7,19 +7,32 @@
 
             <!--            users list -->
             <div class="col-md-2">
-                <UsersList @selectUser="onSelectUser" :users="this.users"></UsersList>
+                <UsersList @selectUser="onSelectUser" @selectGroup="selectGroup" :users="this.users"></UsersList>
             </div>
 
-            <div class="col-md-2">
-                <!--                <UsersList></UsersList>-->
-            </div>
+            <!--            <div class="col-md-2">-->
+            <!--                &lt;!&ndash;                <UsersList></UsersList>&ndash;&gt;-->
+            <!--            </div>-->
 
             <!--            chat messages-->
             <div class="col-md-4 mt-1">
-                <UserIndicator v-if="selectedUser" :user="this.selectedUser"></UserIndicator>
-                <ChatMessages v-if="selectedUser"
-                              :messages="this.messages"></ChatMessages>
-                <Composer v-if="selectedUser" @send="send"></Composer>
+
+
+                <div v-if="this.chatType==='private'">
+                    <UserIndicator v-if="selectedUser" :user="this.selectedUser"></UserIndicator>
+                    <ChatMessages v-if="selectedUser "
+                                  :messages="this.messages"></ChatMessages>
+                    <Composer v-if="selectedUser " @send="send"></Composer>
+                </div>
+
+
+                <div v-else>
+                    <GroupChatMessages v-if="this.chatType==='group'"
+                                       :messages="this.group_messages"></GroupChatMessages>
+                    <Composer v-if="this.chatType==='group'" @send="send"></Composer>
+                </div>
+
+
             </div>
 
 
@@ -38,6 +51,7 @@
     // import {UserSession} from "../../Services/user_session";
     import axios from 'axios';
     import {UserSession} from "../../Services/user_session";
+    import GroupChatMessages from "./GroupChatMessages";
 
     // eslint-disable-next-line no-undef
     var pusher = new Pusher('c43c8e473ffba0fd0a14', {
@@ -46,12 +60,14 @@
     });
     export default {
         name: "Index",
-        components: {UserIndicator, Composer, ChatMessages, UsersList, NavBar},
+        components: {GroupChatMessages, UserIndicator, Composer, ChatMessages, UsersList, NavBar},
         data() {
             return {
                 message: '',
                 messages: [],
-                online :UserSession.getUser().online,
+                group_messages: [],
+                chatType: '',
+                online: UserSession.getUser().online,
                 users: [],
                 selectedUser: null
             }
@@ -65,13 +81,29 @@
 
         methods: {
             send(composerMessage) {
+
                 this.message = composerMessage;
-                this.addMessage();
+
+                //send to private chat
+                if (this.chatType === 'private') {
+                    this.addMessage();
+                } else {
+                    //    send it to group chat
+                    this.addMessageToGroupChat();
+                }
             },
             onSelectUser(user) {
+                this.chatType = 'private';
                 this.selectedUser = user;
                 this.getSelectedUserMessages();
                 this.listenForMessages();
+            },
+            selectGroup() {
+                this.selectedUser = null;
+
+                this.chatType = 'group';
+                this.getGroupMessages();
+                this.listenForGroupMessages();
             },
             //get all user
             getAllUsers() {
@@ -104,7 +136,45 @@
                     // console.log(err)
                 })
             },
+            getGroupMessages() {
+                axios.get("https://sust-chat-app.herokuapp.com/group_chat/get_messages",
+                    {
+                        headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
+
+                    }).then((res) => {
+                    this.group_messages = res.data;
+                }).catch(() => {
+                    // this.isLoading = false;
+                    // this.error_data = err;
+                    // this.showError = true;
+                    // console.log(err)
+                })
+            },
+            addMessageToGroupChat() {
+                axios.post("https://sust-chat-app.herokuapp.com/group_chat",
+                    {
+                        "from": UserSession.getUser()._id.toString(),
+                        "message": this.message
+                    },
+                    {
+                        headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
+
+                    }).then(() => {
+
+                }).catch(() => {
+                    // this.isLoading = false;
+                    // this.error_data = err;
+                    // this.showError = true;
+                    // console.log(err)
+                })
+            },
             addMessage() {
+
+                this.messages.push({
+                    "message"  :this.message,
+                    "from" : UserSession.getUser()._id
+                });
+
                 axios.post("https://sust-chat-app.herokuapp.com/chat",
                     {
                         "from": UserSession.getUser()._id.toString(),
@@ -115,6 +185,10 @@
                         headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
 
                     }).then(() => {
+                        this.message='';
+
+
+
 
                 }).catch(() => {
                     // this.isLoading = false;
@@ -132,7 +206,38 @@
                     // app.users.push();
 
 
-                    app.messages.push(data['message']);
+                    if ( data.message.from!== UserSession.getUser()._id){
+
+
+                        var found = false;
+                        for(var i = 0; i < app.messages.length; i++) {
+                            if (app.messages[i]._id === data['message']._id) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+
+                        if (!found){
+                            app.messages.push(data['message']);
+
+                        }
+
+                    }
+
+
+
+                });
+            },
+            listenForGroupMessages() {
+                var app = this;
+
+                var channel = pusher.subscribe(`sust_group`);
+                channel.bind('send_message', function (data) {
+                    // app.users.push();
+
+
+                    app.group_messages.push(data);
 
                 });
             },
@@ -154,16 +259,14 @@
                         });
 
 
-                        if (!intendedUser[0]){
+                        if (!intendedUser[0]) {
                             app.users.push(data['user']);
 
                         }
 
 
-
-
-                    }else {
-                        app.online=true;
+                    } else {
+                        app.online = true;
 
                     }
 
@@ -179,7 +282,6 @@
                 channel.bind('disconnected', function (data) {
 
 
-
                     if (UserSession.getUser()._id !== data['user']._id) {
                         var intendedUser = app.users.map((user) => {
                             if (user._id === data['user']._id) {
@@ -188,15 +290,15 @@
                                 return null;
                             }
                         });
-                        if (app.selectedUser){
+                        if (app.selectedUser) {
                             if (app.selectedUser._id === data['user']._id) {
                                 app.selectedUser = null;
                             }
                         }
 
                         app.users.splice(app.users.indexOf(intendedUser[0]), 1);
-                    }else {
-                        app.online=false;
+                    } else {
+                        app.online = false;
 
                     }
 
