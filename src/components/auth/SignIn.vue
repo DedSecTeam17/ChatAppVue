@@ -4,7 +4,7 @@
 
         <div class="row mt-4">
             <div class="col-md-4 offset-md-4">
-                <div class="card">
+                <div class="card bg-dark">
                     <div class="card-body">
                         <div v-if="showError" class="alert alert-danger" role="alert">
                             {{error_data}}

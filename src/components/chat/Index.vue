@@ -27,14 +27,24 @@
 
                 <div v-else>
 
-                    <UserIndicator v-if="this.chatType==='group'"  :user="{
+
+                    <div v-if="this.chatType==='group'">
+                        <UserIndicator :user="{
                     'userName' : 'All',
                     '_id' :1
                     }"></UserIndicator>
 
-                    <GroupChatMessages v-if="this.chatType==='group'"
-                                       :messages="this.group_messages"></GroupChatMessages>
-                    <Composer v-if="this.chatType==='group'" @send="send"></Composer>
+                        <GroupChatMessages
+                                :messages="this.group_messages"></GroupChatMessages>
+                        <Composer @send="send"></Composer>
+                    </div>
+
+                    <div v-else>
+                        <h3 style="color: wheat" class="text-center mt-5"><i class="far fa-user"></i> Select contact to
+                            start chat with</h3>
+                    </div>
+
+
                 </div>
 
 
@@ -158,10 +168,23 @@
                 })
             },
             addMessageToGroupChat() {
+                this.group_messages.push({
+                    "message": {
+                        "message": this.message,
+                        "from": UserSession.getUser()._id,
+                        "createdAt": Date.now()
+                    },
+                    "user": {
+                        "userName": UserSession.getUser().userName,
+                        "_id": UserSession.getUser()._id,
+                    }
+                });
+
                 axios.post("https://sust-chat-app.herokuapp.com/group_chat",
                     {
                         "from": UserSession.getUser()._id.toString(),
-                        "message": this.message
+                        "message": this.message,
+
                     },
                     {
                         headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
@@ -178,8 +201,9 @@
             addMessage() {
 
                 this.messages.push({
-                    "message"  :this.message,
-                    "from" : UserSession.getUser()._id
+                    "message": this.message,
+                    "from": UserSession.getUser()._id,
+                    "createdAt": Date.now()
                 });
 
                 axios.post("https://sust-chat-app.herokuapp.com/chat",
@@ -192,9 +216,7 @@
                         headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
 
                     }).then(() => {
-                        this.message='';
-
-
+                    this.message = '';
 
 
                 }).catch(() => {
@@ -213,11 +235,11 @@
                     // app.users.push();
 
 
-                    if ( data.message.from!== UserSession.getUser()._id){
+                    if (data.message.from !== UserSession.getUser()._id) {
 
 
                         var found = false;
-                        for(var i = 0; i < app.messages.length; i++) {
+                        for (var i = 0; i < app.messages.length; i++) {
                             if (app.messages[i]._id === data['message']._id) {
                                 found = true;
                                 break;
@@ -225,12 +247,14 @@
                         }
 
 
-                        if (!found){
+                        if (!found) {
                             app.messages.push(data['message']);
 
                         }
 
                     }
+
+
 
 
 
@@ -243,6 +267,28 @@
                 channel.bind('send_message', function (data) {
                     // app.users.push();
 
+
+
+
+
+                    if (data.message.message.from !== UserSession.getUser()._id) {
+
+
+                        var found = false;
+                        for (var i = 0; i < app.group_messages.length; i++) {
+                            if (app.group_messages[i].user._id === data['message'].user._id) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+
+                        if (!found) {
+                            app.group_messages.push(data);
+
+                        }
+
+                    }
 
                     app.group_messages.push(data);
 

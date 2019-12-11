@@ -14,6 +14,12 @@
                     <div class="message last">
                         {{message.message.message}}
                     </div>
+
+
+                    <p style="font-size: xx-small; color: wheat">
+
+                        <timeago :datetime="message.message.createdAt"></timeago>
+                    </p>
                 </div>
 
 
@@ -22,6 +28,11 @@
                         <p style="color: gray; font-size: 10px"> @ {{message.user.userName}}</p>
                         {{message.message.message}}
                     </div>
+
+                    <p style="font-size: xx-small; color: wheat">
+
+                        <timeago :datetime="message.message.createdAt"></timeago>
+                    </p>
 
                 </div>
             </div>

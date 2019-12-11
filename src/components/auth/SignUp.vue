@@ -8,7 +8,7 @@
             <div class="col-md-4 offset-md-4">
 
 
-                <div class="card">
+                <div class="card bg-dark">
 
                     <div class="card-body">
 

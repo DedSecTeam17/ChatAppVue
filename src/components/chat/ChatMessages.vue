@@ -6,29 +6,38 @@
         <div class="chat" ref="chat">
 
 
-            <div  v-if="messages.length===0">
+            <div v-if="messages.length===0">
                 <p>No messages sent to this chat</p>
             </div>
 
             <div v-for="message in messages" v-bind:key="message._id">
                 <div v-if="message.from ===currentUserId"
-                class="mine messages">
+                     class="mine messages">
                     <div class="message last">
                         {{message.message}}
                     </div>
+                    <p style="font-size: xx-small; color: wheat">
+                        <timeago :datetime="message.createdAt"></timeago>
+                    </p>
                 </div>
 
 
                 <div v-else class="yours messages">
-<!--                    <div class="message">-->
-<!--                        Hey!-->
-<!--                    </div>-->
-<!--                    <div class="message">-->
-<!--                        You there?-->
-<!--                    </div>-->
+                    <!--                    <div class="message">-->
+                    <!--                        Hey!-->
+                    <!--                    </div>-->
+                    <!--                    <div class="message">-->
+                    <!--                        You there?-->
+                    <!--                    </div>-->
                     <div class="message last">
                         {{message.message}}
                     </div>
+
+                    <p style="font-size: xx-small; color: wheat">
+
+                        <timeago :datetime="message.createdAt"></timeago>
+                    </p>
+
                 </div>
             </div>
 
@@ -43,26 +52,26 @@
 
     export default {
         name: "ChatMessages",
-        data(){
-          return {
-              currentUserId : UserSession.getUser()._id
-          }
-        },
-        methods:{
-          scrollToEnd(){
-              setTimeout(()=>{
-
-                  this.$refs.chat.scrollTop=this.$refs.chat.scrollHeight - this.$refs.chat.clientHeight;
-              },50);
-          }
-        },
-        watch:{
-            messages(){
-               this.scrollToEnd();
+        data() {
+            return {
+                currentUserId: UserSession.getUser()._id
             }
         },
-        created(){
-            this.currentUserId=UserSession.getUser()._id;
+        methods: {
+            scrollToEnd() {
+                setTimeout(() => {
+
+                    this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight - this.$refs.chat.clientHeight;
+                }, 50);
+            }
+        },
+        watch: {
+            messages() {
+                this.scrollToEnd();
+            }
+        },
+        created() {
+            this.currentUserId = UserSession.getUser()._id;
         },
         props: {
             messages: Array
