@@ -150,8 +150,7 @@
     .mine .message {
         color: white;
         margin-left: 25%;
-        background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
-        background-attachment: fixed;
+        background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%) fixed;
         position: relative;
     }
 
@@ -163,8 +162,7 @@
         right: -8px;
         height: 20px;
         width: 20px;
-        background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
-        background-attachment: fixed;
+        background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%) fixed;
         border-bottom-left-radius: 15px;
     }
 

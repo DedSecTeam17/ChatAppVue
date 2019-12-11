@@ -3,7 +3,7 @@
         <NavBar :online="this.online"></NavBar>
 
 
-        <div class="row">
+        <div class="row ">
 
             <!--            users list -->
 
