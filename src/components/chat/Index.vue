@@ -6,16 +6,15 @@
         <div class="row">
 
             <!--            users list -->
-            <div class="col-md-2">
-                <UsersList @selectUser="onSelectUser" @selectGroup="selectGroup" :users="this.users"></UsersList>
-            </div>
+
 
             <!--            <div class="col-md-2">-->
             <!--                &lt;!&ndash;                <UsersList></UsersList>&ndash;&gt;-->
             <!--            </div>-->
 
             <!--            chat messages-->
-            <div class="col-md-4 mt-1">
+
+            <div class="col-md-8 mt-1">
 
 
                 <div v-if="this.chatType==='private'">
@@ -27,6 +26,12 @@
 
 
                 <div v-else>
+
+                    <UserIndicator v-if="this.chatType==='group'"  :user="{
+                    'userName' : 'All',
+                    '_id' :1
+                    }"></UserIndicator>
+
                     <GroupChatMessages v-if="this.chatType==='group'"
                                        :messages="this.group_messages"></GroupChatMessages>
                     <Composer v-if="this.chatType==='group'" @send="send"></Composer>
@@ -34,7 +39,9 @@
 
 
             </div>
-
+            <div class="col-md-4">
+                <UsersList @selectUser="onSelectUser" @selectGroup="selectGroup" :users="this.users"></UsersList>
+            </div>
 
         </div>
 

@@ -78,7 +78,7 @@
         max-height: 400px;
         /*position: fixed;*/
         /*width: 500px;*/
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
         border: solid 1px #EEE;
         display: flex;
@@ -130,7 +130,7 @@
         left: -10px;
         width: 10px;
         height: 20px;
-        background: white;
+        background: #24252a;
         border-bottom-right-radius: 10px;
     }
 
@@ -167,7 +167,7 @@
         right: -10px;
         width: 10px;
         height: 20px;
-        background: white;
+        background: #24252a;
         border-bottom-left-radius: 10px;
     }
 

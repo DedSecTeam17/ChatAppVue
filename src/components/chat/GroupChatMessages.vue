@@ -3,6 +3,8 @@
 
     <div>
 
+
+
         <div class="chat" ref="chat">
 
 
@@ -16,13 +18,6 @@
 
 
                 <div v-else class="yours messages">
-                    <!--                    <div class="message">-->
-                    <!--                        Hey!-->
-                    <!--                    </div>-->
-                    <!--                    <div class="message">-->
-                    <!--                        You there?-->
-                    <!--                    </div>-->
-
                     <div class="message last">
                         <p style="color: gray; font-size: 10px"> @ {{message.user.userName}}</p>
                         {{message.message.message}}
@@ -130,7 +125,7 @@
         left: -10px;
         width: 10px;
         height: 20px;
-        background: white;
+        background: #24252a;
         border-bottom-right-radius: 10px;
     }
 
@@ -167,7 +162,7 @@
         right: -10px;
         width: 10px;
         height: 20px;
-        background: white;
+        background: #24252a;
         border-bottom-left-radius: 10px;
     }
 

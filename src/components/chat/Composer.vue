@@ -1,14 +1,14 @@
 <template>
-    <div class="card">
+    <div class="card bg-dark">
 
         <div class="card-body">
             <form @submit.prevent="send()" class=" row">
-                <div class=" col-9">
+                <div class=" col-10">
                     <input v-model="message" type="text" class="form-control" id="inputPassword2" placeholder="message">
 
                 </div>
-                <div class="col-1">
-                    <button type="submit" class="btn btn-outline-primary  ">Send</button>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-outline-primary btn-block "><i class="fas fa-paper-plane"></i></button>
                 </div>
             </form>
 
