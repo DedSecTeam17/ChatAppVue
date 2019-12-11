@@ -6,6 +6,10 @@
         <div class="chat" ref="chat">
 
 
+            <div  v-if="messages.length===0">
+                <p>No messages sent to this chat</p>
+            </div>
+
             <div v-for="message in messages" v-bind:key="message._id">
                 <div v-if="message.from ===currentUserId"
                 class="mine messages">
