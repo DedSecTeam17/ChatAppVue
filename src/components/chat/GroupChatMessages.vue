@@ -9,29 +9,29 @@
 
 
             <div v-for="message in messages" v-bind:key="message._id">
-                <div v-if="message.message.from ===currentUserId"
+                <div v-if="message.from ===currentUserId"
                      class="mine messages">
                     <div class="message last">
-                        {{message.message.message}}
+                        {{message.message}}
                     </div>
 
 
                     <p style="font-size: xx-small; color: wheat">
 
-                        <timeago :datetime="message.message.createdAt"></timeago>
+                        <timeago :datetime="message.createdAt"></timeago>
                     </p>
                 </div>
 
 
                 <div v-else class="yours messages">
                     <div class="message last">
-                        <p style="color: gray; font-size: 10px"> @ {{message.user.userName}}</p>
-                        {{message.message.message}}
+                        <p style="color: gray; font-size: 10px"> @ {{message.name}}</p>
+                        {{message.message}}
                     </div>
 
                     <p style="font-size: xx-small; color: wheat">
 
-                        <timeago :datetime="message.message.createdAt"></timeago>
+                        <timeago :datetime="message.createdAt"></timeago>
                     </p>
 
                 </div>

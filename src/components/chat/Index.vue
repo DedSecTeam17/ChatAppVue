@@ -91,6 +91,7 @@
         },
         created() {
 
+
             this.getAllUsers();
             this.listenForUsersConnections();
             this.listenForUsersDisconnections();
@@ -110,12 +111,33 @@
                 }
             },
             onSelectUser(user) {
+
+                var app = this;
+
+                if (this.selectedUser) {
+                    pusher.unsubscribe(`messages-${UserSession.getUser()._id}-${app.selectedUser._id}`);
+                    pusher.unsubscribe(`messages-${app.selectedUser._id}-${UserSession.getUser()._id}`);
+                }
+
+                if (this.chatType === 'group') {
+                    pusher.unsubscribe(`sust_group`);
+
+                }
+
                 this.chatType = 'private';
                 this.selectedUser = user;
                 this.getSelectedUserMessages();
                 this.listenForMessages();
             },
             selectGroup() {
+                var app = this;
+
+                if (this.selectedUser) {
+                    pusher.unsubscribe(`messages-${UserSession.getUser()._id}-${app.selectedUser._id}`);
+                    pusher.unsubscribe(`messages-${app.selectedUser._id}-${UserSession.getUser()._id}`);
+                }
+
+
                 this.selectedUser = null;
 
                 this.chatType = 'group';
@@ -169,21 +191,17 @@
             },
             addMessageToGroupChat() {
                 this.group_messages.push({
-                    "message": {
-                        "message": this.message,
-                        "from": UserSession.getUser()._id,
-                        "createdAt": Date.now()
-                    },
-                    "user": {
-                        "userName": UserSession.getUser().userName,
-                        "_id": UserSession.getUser()._id,
-                    }
+                    "message": this.message,
+                    "from": UserSession.getUser()._id,
+                    "name": UserSession.getUser().userName,
+                    "createdAt": Date.now()
                 });
 
                 axios.post("https://sust-chat-app.herokuapp.com/group_chat",
                     {
                         "from": UserSession.getUser()._id.toString(),
                         "message": this.message,
+                        "name": UserSession.getUser().userName
 
                     },
                     {
@@ -235,7 +253,8 @@
                     // app.users.push();
 
 
-                    if (data.message.from !== UserSession.getUser()._id) {
+                    // if receiver  is me and sender the user that i select
+                    if (data.message.to === UserSession.getUser()._id && app.selectedUser._id === data.message.from) {
 
 
                         var found = false;
@@ -255,9 +274,6 @@
                     }
 
 
-
-
-
                 });
             },
             listenForGroupMessages() {
@@ -268,15 +284,12 @@
                     // app.users.push();
 
 
-
-
-
-                    if (data.message.message.from !== UserSession.getUser()._id) {
+                    if (data.message.from !== UserSession.getUser()._id) {
 
 
                         var found = false;
                         for (var i = 0; i < app.group_messages.length; i++) {
-                            if (app.group_messages[i].user._id === data['message'].user._id) {
+                            if (app.group_messages[i]._id === data['message']._id) {
                                 found = true;
                                 break;
                             }
@@ -284,13 +297,13 @@
 
 
                         if (!found) {
-                            app.group_messages.push(data);
+                            app.group_messages.push(data['message']);
 
                         }
 
                     }
 
-                    app.group_messages.push(data);
+                    // app.group_messages.push(data['message']);
 
                 });
             },
@@ -302,19 +315,31 @@
 
 
                     if (UserSession.getUser()._id !== data['user']._id) {
-                        //check if user already added
-                        var intendedUser = app.users.map((user) => {
-                            if (user._id === UserSession.getUser()._id) {
-                                return user;
-                            } else {
-                                return null;
+
+
+                        var found = false;
+                        for (var i = 0; i < app.users.length; i++) {
+                            if (app.users[i]._id === data['user']._id) {
+                                found = true;
+                                break;
                             }
-                        });
+                        }
+
+                        if (!found) {
+                            //check if user already added
+                            var intendedUser = app.users.map((user) => {
+                                if (user._id === UserSession.getUser()._id) {
+                                    return user;
+                                } else {
+                                    return null;
+                                }
+                            });
 
 
-                        if (!intendedUser[0]) {
-                            app.users.push(data['user']);
+                            if (!intendedUser[0]) {
+                                app.users.push(data['user']);
 
+                            }
                         }
 
 
