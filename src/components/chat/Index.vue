@@ -81,7 +81,8 @@
         data() {
             return {
                 message: '',
-                messages: [],
+                err : null,
+                  messages: [],
                 group_messages: [],
                 chatType: '',
                 online: UserSession.getUser().online,
@@ -207,9 +208,14 @@
                     {
                         headers: {'Authorization': `jwt ${UserSession.getUserToken()}`},
 
-                    }).then(() => {
+                    }).then((res) => {
 
-                }).catch(() => {
+
+                        this.err=res;
+
+                }).catch((err) => {
+                    this.err=err;
+
                     // this.isLoading = false;
                     // this.error_data = err;
                     // this.showError = true;
